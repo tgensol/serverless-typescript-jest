@@ -8,9 +8,9 @@ provider:
  
 
 functions:
-  default:
+  hello:
     timeout: 5
-    handler: handler.default
+    handler: handler.hello
     memorySize: 128
 
 plugins:
