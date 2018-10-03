@@ -1,17 +1,19 @@
+import { APIGatewayEvent } from "aws-lambda"
+import * as context from "aws-lambda-mock-context"
 import { hello } from "../handler"
-import * as context from 'aws-lambda-mock-context'
 
 describe("This is a simple test", () => {
     test("Check the hello function", () => {
-        const ctx = context();
-        let evt = {}
-        hello(evt, ctx)
+        const ctx = context()
+        const evt = {}
+        hello(evt as APIGatewayEvent, ctx)
         ctx.Promise
             .then((res: any) => {
                 expect(res.statusCode).toBe(200)
             })
             .catch((err: any) => {
-                console.log('ERRR', err)
-            });
-    });
-});
+                // tslint:disable-next-line:no-console
+                console.log("ERRR", err)
+            })
+    })
+})
