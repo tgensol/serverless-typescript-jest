@@ -1,12 +1,6 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
 
-const entries = {};
-
-Object.keys(slsw.lib.entries).forEach(
-	key => (entries[key] = ['./source-map-install.js', slsw.lib.entries[key]])
-);
-
 module.exports = {
 	mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
 	entry: slsw.lib.entries,
