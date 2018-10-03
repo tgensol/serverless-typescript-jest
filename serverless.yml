@@ -17,7 +17,6 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-offline
-  - serverless-mocha-plugin
   - serverless-pseudo-parameters
 
 package:
