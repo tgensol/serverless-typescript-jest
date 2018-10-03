@@ -1,0 +1,40 @@
+service: serverless-typescript
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'prod'}
+  region: eu-west-1
+ 
+
+functions:
+  default:
+    timeout: 5
+    handler: handler.default
+    memorySize: 128
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+  - serverless-offline
+  - serverless-mocha-plugin
+  - serverless-pseudo-parameters
+
+package:
+  individually: true
+  exclude:
+    - __tests__/**
+    - others/**
+    - .webpack/**
+    - .cache-loader/**
+
+custom:
+  webpackIncludeModules: true # enable auto including modules
+  skipLogGroupCreation: true
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules:
+      forceExclude:
+        - aws-sdk
+
+
