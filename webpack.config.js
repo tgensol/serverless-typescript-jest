@@ -1,26 +1,49 @@
+const os = require('os');
 const path = require('path');
 const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
-	mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
 	entry: slsw.lib.entries,
-	devtool: 'source-map',
+	target: 'node',
+	mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
 	resolve: {
-		extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+		extensions: ['.ts', '.js'],
+	},
+	devtool: 'source-map',
+	plugins: [
+		new ForkTsCheckerWebpackPlugin({
+			checkSyntacticErrors: true
+		}),
+	],
+	externals: [nodeExternals()],
+	module: {
+		rules: [{
+			test: /\.ts$/,
+			use: [{
+				loader: 'cache-loader',
+			}, {
+				loader: 'thread-loader',
+				options: {
+					// There should be 1 cpu for the
+					// fork-ts-checker-webpack-plugin
+					workers: os.cpus().length - 1,
+				},
+			}, {
+				loader: 'ts-loader',
+				options: {
+					// IMPORTANT! use happyPackMode mode to speed-up
+					// compilation and reduce errors reported to webpack
+					happyPackMode: true,
+				},
+			}],
+		}],
 	},
 	output: {
-		libraryTarget: 'commonjs',
+		libraryTarget: 'commonjs2',
 		path: path.join(__dirname, '.webpack'),
 		filename: '[name].js',
-	},
-	target: 'node',
-	module: {
-		rules: [
-			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-			{
-				test: /\.tsx?$/,
-				loader: 'ts-loader'
-			},
-		],
+		sourceMapFilename: '[file].map',
 	},
 };
